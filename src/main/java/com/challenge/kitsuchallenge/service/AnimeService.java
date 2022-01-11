@@ -1,10 +1,11 @@
 package com.challenge.kitsuchallenge.service;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 
-import java.util.NoSuchElementException;
+import java.util.List;
 
+import com.challenge.kitsuchallenge.model.Anime;
+import com.challenge.kitsuchallenge.util.AnimeUtil;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
@@ -19,7 +20,7 @@ public class AnimeService {
     @Value("${my.property.anime}")
     String baseUrl;
 
-    public ResponseEntity<?> findById(long id) {
+    public Anime findById(long id) {
 
         RestTemplate template = new RestTemplate();
         try {
@@ -30,17 +31,17 @@ public class AnimeService {
             
             Gson gson = new GsonBuilder().create();
             JsonObject obj = gson.fromJson(result, JsonObject.class);
-            
-            return new ResponseEntity<String>(obj.toString(), HttpStatus.OK);
 
-        } catch (NoSuchElementException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            Anime anime = AnimeUtil.makeAnime(obj);
+
+            return anime;
+
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return null;
         }
     }
 
-    public ResponseEntity<?> findByTrending() {
+    public List<Anime> findByTrending() {
 
         RestTemplate template = new RestTemplate();
         try {
@@ -50,20 +51,20 @@ public class AnimeService {
             String result = entity.getBody().toString();
             Gson gson = new GsonBuilder().create();
             JsonObject obj = gson.fromJson(result, JsonObject.class);
-            
-            return new ResponseEntity<String>(obj.toString(), HttpStatus.OK);
 
-        } catch (NoSuchElementException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            List<Anime> listaAnime = AnimeUtil.makeAnimeList(obj);
+            
+            return listaAnime;
+
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return null;
         }
     }
 
-    public ResponseEntity<?> findByFilter(String attribute, String value) {
+    public List<Anime> findByFilter(String attribute, String value) {
 
         if (attribute.isEmpty() || value.isEmpty()){
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return null;
         }
 
         RestTemplate template = new RestTemplate();
@@ -75,12 +76,12 @@ public class AnimeService {
             Gson gson = new GsonBuilder().create();
             JsonObject obj = gson.fromJson(result, JsonObject.class);
             
-            return new ResponseEntity<String>(obj.toString(), HttpStatus.OK);
+            List<Anime> listaAnime = AnimeUtil.makeAnimeList(obj);
 
-        } catch (NoSuchElementException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return listaAnime;
+
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return null;
         }
     }
 

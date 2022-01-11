@@ -1,10 +1,11 @@
 package com.challenge.kitsuchallenge.controller;
 
+import java.util.List;
+
 import com.challenge.kitsuchallenge.model.Anime;
 import com.challenge.kitsuchallenge.service.AnimeService;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -16,17 +17,17 @@ public class AnimeController {
     AnimeService as;
 
     @GetMapping(path = "/{id}")
-    public ResponseEntity<?> getAnimeById(@PathVariable long id) {
+    public Anime getAnimeById(@PathVariable long id) {
         return as.findById(id);
     }
 
     @GetMapping("/trending")
-    public ResponseEntity<?> getAnimeTrending(){
+    public List<Anime> getAnimeTrending(){
         return as.findByTrending();
     }
 
     @GetMapping("/filter")
-    public ResponseEntity<?> getAnimeFilter(@RequestParam String attribute, String value) {
+    public List<Anime> getAnimeFilter(@RequestParam String attribute, String value) {
         return as.findByFilter(attribute, value);
     }
 

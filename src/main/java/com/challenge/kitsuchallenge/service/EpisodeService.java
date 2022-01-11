@@ -1,10 +1,11 @@
 package com.challenge.kitsuchallenge.service;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 
-import java.util.NoSuchElementException;
+import java.util.List;
 
+import com.challenge.kitsuchallenge.model.Episode;
+import com.challenge.kitsuchallenge.util.EpisodeUtil;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
@@ -19,7 +20,7 @@ public class EpisodeService {
     @Value("${my.property.episode}")
     String baseUrl;
 
-    public ResponseEntity<?> findById(long id) {
+    public Episode findById(long id) {
 
         RestTemplate template = new RestTemplate();
         try {
@@ -27,24 +28,21 @@ public class EpisodeService {
             ResponseEntity<?> entity = template.getForEntity(url, String.class);
 
             String result = entity.getBody().toString();
-            /* System.out.println(new ResponseEntity<>(entity.getBody().toString(), HttpStatus.OK)); */
             Gson gson = new GsonBuilder().create();
             JsonObject obj = gson.fromJson(result, JsonObject.class);
-            /* JsonElement entry = obj.getAsJsonObject("results").getAsJsonObject("map").getAsJsonArray("entry"); */
 
-            
-            return new ResponseEntity<String>(obj.toString(), HttpStatus.OK);
+            Episode episode = EpisodeUtil.makeEpisode(obj);
 
-        } catch (NoSuchElementException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return episode;
+
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return null;
         }
     }
 
-    public ResponseEntity<?> findByFilterID(String animeID, String episodeNumber) {
+    public List<Episode> findByFilterID(String animeID, String episodeNumber) {
         if (animeID.isEmpty() || episodeNumber.isEmpty()){
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return null;
         }
 
         RestTemplate template = new RestTemplate();
@@ -53,17 +51,15 @@ public class EpisodeService {
             ResponseEntity<?> entity = template.getForEntity(url, String.class);
 
             String result = entity.getBody().toString();
-            /* System.out.println(new ResponseEntity<>(entity.getBody().toString(), HttpStatus.OK)); */
             Gson gson = new GsonBuilder().create();
             JsonObject obj = gson.fromJson(result, JsonObject.class);
-            /* JsonElement entry = obj.getAsJsonObject("results").getAsJsonObject("map").getAsJsonArray("entry"); */
             
-            return new ResponseEntity<String>(obj.toString(), HttpStatus.OK);
+            List<Episode> episodes = EpisodeUtil.makeEpisodeList(obj);
 
-        } catch (NoSuchElementException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return episodes;
+
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return null;
         }
     }
 }

@@ -1,10 +1,11 @@
 package com.challenge.kitsuchallenge.service;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 
-import java.util.NoSuchElementException;
+import java.util.List;
 
+import com.challenge.kitsuchallenge.model.Manga;
+import com.challenge.kitsuchallenge.util.MangaUtil;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
@@ -19,7 +20,7 @@ public class MangaService {
     @Value("${my.property.manga}")
     String baseUrl;
 
-    public ResponseEntity<?> findById(long id) {
+    public Manga findById(long id) {
 
         RestTemplate template = new RestTemplate();
         try {
@@ -31,16 +32,16 @@ public class MangaService {
             Gson gson = new GsonBuilder().create();
             JsonObject obj = gson.fromJson(result, JsonObject.class);
             
-            return new ResponseEntity<String>(obj.toString(), HttpStatus.OK);
+            Manga manga = MangaUtil.makeManga(obj);
 
-        } catch (NoSuchElementException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return manga;
+
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return null;
         }
     }
 
-    public ResponseEntity<?> findByTrending() {
+    public List<Manga> findByTrending() {
 
         RestTemplate template = new RestTemplate();
         try {
@@ -51,19 +52,19 @@ public class MangaService {
             Gson gson = new GsonBuilder().create();
             JsonObject obj = gson.fromJson(result, JsonObject.class);
             
-            return new ResponseEntity<String>(obj.toString(), HttpStatus.OK);
+            List<Manga> listaManga = MangaUtil.makeMangaList(obj);
+            
+            return listaManga;
 
-        } catch (NoSuchElementException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return null;
         }
     }
 
-    public ResponseEntity<?> findByFilter(String attribute, String value) {
+    public List<Manga> findByFilter(String attribute, String value) {
 
         if (attribute.isEmpty() || value.isEmpty()){
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return null;
         }
 
         RestTemplate template = new RestTemplate();
@@ -75,12 +76,12 @@ public class MangaService {
             Gson gson = new GsonBuilder().create();
             JsonObject obj = gson.fromJson(result, JsonObject.class);
             
-            return new ResponseEntity<String>(obj.toString(), HttpStatus.OK);
+            List<Manga> listaManga = MangaUtil.makeMangaList(obj);
 
-        } catch (NoSuchElementException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return listaManga;
+
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return null;
         }
     }
 }

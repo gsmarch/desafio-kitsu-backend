@@ -2,7 +2,6 @@ package com.challenge.kitsuchallenge.model;
 
 public class Episode extends BaseEntity {
 
-    private String animeName;
     private String id;
     private String title;
     private String synopsis;
@@ -14,9 +13,8 @@ public class Episode extends BaseEntity {
         super();
     }
 
-    public Episode(String animeName, String id, String title, String synopsis, String airDate, String seasonNumber,
+    public Episode(String id, String title, String synopsis, String airDate, String seasonNumber,
             String durationInMinutes) {
-        this.animeName = animeName;
         this.id = id;
         this.title = title;
         this.synopsis = synopsis;
@@ -24,15 +22,7 @@ public class Episode extends BaseEntity {
         this.seasonNumber = seasonNumber;
         this.durationInMinutes = durationInMinutes;
     }
-
-    public String getAnimeName() {
-        return animeName;
-    }
-
-    public void setAnimeName(String animeName) {
-        this.animeName = animeName;
-    }
-
+    
     public String getId() {
         return id;
     }
